@@ -10,6 +10,16 @@ export enum Gender {
   Other = 'other',
 }
 
+export enum EntryType {
+  Hospital = 'Hospital',
+  OccupationalHealthcare = 'OccupationalHealthcare',
+  HealthCheck = 'HealthCheck',
+}
+export type HealthCheckRatingColor =
+  | 'green'
+  | 'yellow'
+  | 'red'
+  | 'black';
 export interface Patient {
   id: string;
   name: string;
@@ -23,6 +33,11 @@ export type Entry =
   | HospitalEntry
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
+
+export type NewEntry =
+  | Omit<HealthCheckEntry, 'id'>
+  | Omit<HospitalEntry, 'id'>
+  | Omit<OccupationalHealthcareEntry, 'id'>;
 interface BaseEntry {
   id: string;
   description: string;
@@ -51,7 +66,6 @@ export interface HospitalEntry extends BaseEntry {
   type: 'Hospital';
   discharge: Discharge;
 }
-
 export interface SickLeave {
   startDate: string;
   endDate: string;

@@ -1,3 +1,12 @@
+export interface Patient {
+  id: string;
+  name: string;
+  ssn: string;
+  occupation: string;
+  gender: Gender;
+  dateOfBirth: string;
+  entries: Entry[];
+}
 export interface Diagnose {
   code: string;
   name: string;
@@ -8,22 +17,11 @@ export enum Gender {
   Male = 'male',
   Other = 'other',
 }
-
-export type NewPatientEntry = Omit<Patient, 'id' | 'entries'>;
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export type Entry =
-  | HospitalEntry
-  | OccupationalHealthcareEntry
-  | HealthCheckEntry;
-interface BaseEntry {
-  id: string;
-  description: string;
-  date: string;
-  specialist: string;
-  diagnosisCodes?: Array<Diagnose['code']>;
+export enum EntryType {
+  HealthCheck = 'HealthCheck',
+  Hospital = 'Hospital',
+  OccupationalHealthcare = 'OccupationalHealthcare',
 }
-
 export enum HealthCheckRating {
   'Healthy' = 0,
   'LowRisk' = 1,
@@ -31,6 +29,19 @@ export enum HealthCheckRating {
   'CriticalRisk' = 3,
 }
 
+export type NewPatientEntry = Omit<Patient, 'id' | 'entries'>;
+export type NonSensitivePatientEntry = Omit<
+  Patient,
+  'ssn' | 'entries'
+>;
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface BaseEntry {
+  id: string;
+  description: string;
+  date: string;
+  specialist: string;
+  diagnosisCodes?: Array<Diagnose['code']>;
+}
 interface HealthCheckEntry extends BaseEntry {
   type: 'HealthCheck';
   healthCheckRating: HealthCheckRating;
@@ -49,23 +60,18 @@ export interface SickLeave {
   startDate: string;
   endDate: string;
 }
-
 interface OccupationalHealthcareEntry extends BaseEntry {
   type: 'OccupationalHealthcare';
   sickLeave?: SickLeave;
   employerName?: string;
 }
-export interface Patient {
-  id: string;
-  name: string;
-  ssn: string;
-  occupation: string;
-  gender: Gender;
-  dateOfBirth: string;
-  entries: Entry[];
-}
 
-export type NonSensitivePatientEntry = Omit<
-  Patient,
-  'ssn' | 'entries'
->;
+export type Entry =
+  | HospitalEntry
+  | OccupationalHealthcareEntry
+  | HealthCheckEntry;
+
+export type NewEntry =
+  | Omit<HealthCheckEntry, 'id'>
+  | Omit<HospitalEntry, 'id'>
+  | Omit<OccupationalHealthcareEntry, 'id'>;
